@@ -1,10 +1,24 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using System.Data;
+using MVC_Demo;
+using MySql.Data.MySqlClient;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var app = builder.Build();
 
+builder.Services.AddScoped<IDbConnection>((s) =>
+{
+    IDbConnection conn = new MySqlConnection(builder.Configuration.GetConnectionString("bestbuy"));
+    conn.Open();
+    return conn;
+});
+
+
+builder.Services.AddTransient<IProductRepository, ProductRepository>();
+
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
